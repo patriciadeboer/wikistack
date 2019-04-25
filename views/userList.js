@@ -7,7 +7,7 @@ module.exports = (users) => layout(html`
   <ul class="list-unstyled">
     <ul>
       ${users.map(user => html`<li>
-        <a href="/users/${user.id}">${user.name}</a>
+        <a href="/user/${user.id}">${user.name}</a>
       </li>`)}
     </ul>
   </ul>
