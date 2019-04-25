@@ -23,7 +23,7 @@ module.exports = (content) => html`<!DOCTYPE html>
             <ul class="nav navbar-nav">
               <li><a href="/wiki/">index</a></li>
               <li><a href="/wiki/add">write</a></li>
-              <li><a href="/users">users</a></li>
+              <li><a href="/user">users</a></li>
             </ul>
           </div>
         </div>
