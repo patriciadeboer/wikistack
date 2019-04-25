@@ -1,37 +1,51 @@
 const express = require('express');
 const router = express.Router();
-const { Page } = require("../models");
+const { Page } = require('../models');
 
-const {addPage}= require('./../views');
+const { addPage } = require('./../views');
 
-function generateSlug (title) {
-  // Removes all non-alphanumeric characters from title
-  // And make whitespace underscore
-  return title.replace(/\s+/g, '_').replace(/\W/g, '');
-}
+const wikipage = require('./../views/wikipage');
+const layout = require('./../views/layout');
 
-router.get('/',(req,res,next)=>{
-  res.send('got to GET /wiki/')
+const main=require('./../views/main')
+
+router.get('/', async (req, res, next) => {
+  let pageList = await Page.findAll();
+  console.log(pageList);
+  res.send(main(pageList));
 });
 
-router.post('/', async (req,res,next)=>{
+router.get('/add', (req, res) => {
+  res.send(addPage());
+});
+
+router.get('/:slug', async (req, res, next) => {
+  // res.send(`hit dynamic route at ${req.params.slug}`);
+  try {
+    const page = await Page.findOne({
+      where: {
+        slug: req.params.slug,
+      },
+    });
+    res.send(wikipage(page));
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/', async (req, res, next) => {
   const page = new Page({
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    status: req.body.status,
   });
-  console.log(page)
-  // res.json(req.body)
 
   try {
     await page.save();
-    res.redirect('/');
-  } catch (error) { next(error) }
+    res.redirect(`/wiki/${page.dataValues.slug}`);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.get('/add',(req,res)=>{
-  res.send(addPage())
-})
-
-
-
-module.exports=router;
+module.exports = router;
